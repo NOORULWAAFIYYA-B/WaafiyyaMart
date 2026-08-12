@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WaafiyyaMart | Login</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="auth-shell">
+      <section class="auth-card">
+        <div class="brand-row" aria-label="WaafiyyaMart brand">
+          <div class="brand-mark">W</div>
+          <span>WaafiyyaMart</span>
+        </div>
+
+        <h1>Welcome back</h1>
+        <p class="subtitle">Log in to continue shopping and manage your orders.</p>
+
+        <form id="loginForm" novalidate>
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          />
+
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          />
+
+          <div class="form-row">
+            <label class="checkbox-row" for="rememberMe">
+              <input id="rememberMe" type="checkbox" />
+              <span>Remember me</span>
+            </label>
+            <a href="#">Forgot password?</a>
+          </div>
+
+          <button type="submit">Sign in</button>
+        </form>
+
+        <p class="switch-text">
+          New here?
+          <a href="register.html">Create an account</a>
+        </p>
+
+        <p id="loginMessage" class="message" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

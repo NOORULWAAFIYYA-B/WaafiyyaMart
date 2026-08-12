@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WaafiyyaMart | Register</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="auth-shell">
+      <section class="auth-card">
+        <div class="brand-row" aria-label="WaafiyyaMart brand">
+          <div class="brand-mark">W</div>
+          <span>WaafiyyaMart</span>
+        </div>
+
+        <h1>Create account</h1>
+        <p class="subtitle">Sign up to start shopping with WaafiyyaMart.</p>
+
+        <form id="registerForm" novalidate>
+          <label for="fullName">Full name</label>
+          <input id="fullName" name="fullName" type="text" placeholder="Jane Doe" autocomplete="name" required />
+
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required />
+
+          <button type="submit">Create account</button>
+        </form>
+
+        <p class="switch-text">
+          Already have an account?
+          <a href="login.html">Sign in</a>
+        </p>
+
+        <p id="registerMessage" class="message" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

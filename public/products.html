@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WaafiyyaMart | Shop</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="shop">
+    <header class="shop-header">
+      <div class="brand-row">
+        <div class="brand-mark">W</div>
+        <span>WaafiyyaMart</span>
+      </div>
+
+      <div class="header-actions">
+        <span id="userLabel">Guest</span>
+        <button id="logoutBtn" class="secondary-btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main class="shop-layout">
+      <section class="products-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Browse products</p>
+            <h1>Featured items</h1>
+          </div>
+        </div>
+        <div id="productGrid" class="product-grid"></div>
+      </section>
+
+      <aside class="cart-panel">
+        <h2>Cart</h2>
+        <div class="cart-summary">
+          <span>Items</span>
+          <strong id="cartCount">0</strong>
+        </div>
+
+        <ul id="cartItems" class="cart-items"></ul>
+
+        <div class="order-total">
+          <span>Total</span>
+          <strong id="cartTotal">$0.00</strong>
+        </div>
+
+        <button id="placeOrderBtn" class="primary-btn" type="button">Place order</button>
+        <p id="orderMessage" class="message" role="status" aria-live="polite"></p>
+      </aside>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
