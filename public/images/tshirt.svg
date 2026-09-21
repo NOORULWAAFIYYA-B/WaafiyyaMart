@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" rx="24" fill="#172033"/>
+  <path d="M210 95 L270 55 L330 55 L390 95 L475 145 L425 225 L375 190 L375 345 L225 345 L225 190 L175 225 L125 145 Z"
+        fill="#f97316" stroke="#ffffff" stroke-width="8"/>
+  <text x="300" y="375" text-anchor="middle"
+        font-family="Arial" font-size="28" font-weight="bold" fill="#ffffff">
+    Classic T-Shirt
+  </text>
+</svg>

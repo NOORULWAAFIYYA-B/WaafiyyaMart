@@ -1,54 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WaafiyyaMart | Shop</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body data-page="shop">
-    <header class="shop-header">
-      <div class="brand-row">
-        <div class="brand-mark">W</div>
-        <span>WaafiyyaMart</span>
-      </div>
 
-      <div class="header-actions">
-        <span id="userLabel">Guest</span>
-        <button id="logoutBtn" class="secondary-btn" type="button">Logout</button>
-      </div>
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>WaafiyyaMart | Shop</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    />
+
+    <style>
+
+        /* --------------------------------------------------
+           ORDER HISTORY BUTTON
+        -------------------------------------------------- */
+
+        .order-history-btn {
+            display: inline-block;
+
+            padding: 10px 16px;
+
+            border-radius: 10px;
+
+            background: #172033;
+
+            border: 1px solid #334155;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+
+        .order-history-btn:hover {
+            background: #243047;
+
+            border-color: #475569;
+        }
+
+
+        /* Keep header buttons aligned */
+
+        .header-actions {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+    </style>
+
+</head>
+
+
+<body data-page="shop">
+
+
+    <!-- --------------------------------------------------
+         HEADER
+    -------------------------------------------------- -->
+
+    <header class="shop-header">
+
+        <div class="brand-row">
+
+            <div class="brand-mark">
+                W
+            </div>
+
+            <span>
+                WaafiyyaMart
+            </span>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <span id="userLabel">
+                Guest
+            </span>
+
+
+            <!-- ORDER HISTORY BUTTON -->
+
+            <a
+                href="order-history.html"
+                class="order-history-btn"
+            >
+                Order History
+            </a>
+
+
+            <!-- LOGOUT BUTTON -->
+
+            <button
+                id="logoutBtn"
+                class="secondary-btn"
+                type="button"
+            >
+                Logout
+            </button>
+
+        </div>
+
     </header>
 
+
+    <!-- --------------------------------------------------
+         MAIN SHOP AREA
+    -------------------------------------------------- -->
+
     <main class="shop-layout">
-      <section class="products-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Browse products</p>
-            <h1>Featured items</h1>
-          </div>
-        </div>
-        <div id="productGrid" class="product-grid"></div>
-      </section>
 
-      <aside class="cart-panel">
-        <h2>Cart</h2>
-        <div class="cart-summary">
-          <span>Items</span>
-          <strong id="cartCount">0</strong>
-        </div>
 
-        <ul id="cartItems" class="cart-items"></ul>
+        <!-- --------------------------------------------------
+             PRODUCTS
+        -------------------------------------------------- -->
 
-        <div class="order-total">
-          <span>Total</span>
-          <strong id="cartTotal">$0.00</strong>
-        </div>
+        <section class="products-panel">
 
-        <button id="placeOrderBtn" class="primary-btn" type="button">Place order</button>
-        <p id="orderMessage" class="message" role="status" aria-live="polite"></p>
-      </aside>
+            <div class="section-head">
+
+                <div>
+
+                    <p class="eyebrow">
+                        Browse products
+                    </p>
+
+                    <h1>
+                        Featured items
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="productGrid"
+                class="product-grid"
+            ></div>
+
+        </section>
+
+
+        <!-- --------------------------------------------------
+             CART
+        -------------------------------------------------- -->
+
+        <aside class="cart-panel">
+
+            <h2>
+                Cart
+            </h2>
+
+
+            <div class="cart-summary">
+
+                <span>
+                    Items
+                </span>
+
+                <strong id="cartCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <ul
+                id="cartItems"
+                class="cart-items"
+            ></ul>
+
+
+            <div class="order-total">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="cartTotal">
+                    $0.00
+                </strong>
+
+            </div>
+
+
+            <button
+                id="placeOrderBtn"
+                class="primary-btn"
+                type="button"
+            >
+                Place order
+            </button>
+
+
+            <p
+                id="orderMessage"
+                class="message"
+                role="status"
+                aria-live="polite"
+            ></p>
+
+        </aside>
+
     </main>
 
+
+    <!-- --------------------------------------------------
+         JAVASCRIPT
+    -------------------------------------------------- -->
+
     <script src="app.js"></script>
-  </body>
+
+</body>
+
 </html>

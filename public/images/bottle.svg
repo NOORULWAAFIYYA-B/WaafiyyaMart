@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" rx="24" fill="#172033"/>
+  <rect x="255" y="65" width="90" height="35" rx="8"
+        fill="#ffffff"/>
+  <rect x="245" y="95" width="110" height="245" rx="35"
+        fill="#f97316" stroke="#ffffff" stroke-width="8"/>
+  <rect x="265" y="145" width="70" height="90" rx="20"
+        fill="#172033" stroke="#ffffff" stroke-width="6"/>
+  <text x="300" y="375" text-anchor="middle"
+        font-family="Arial" font-size="28" font-weight="bold" fill="#ffffff">
+    Steel Bottle
+  </text>
+</svg>

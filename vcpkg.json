@@ -1,0 +1,13 @@
+{
+  "name": "waafiyyamart",
+  "version-string": "1.0.0",
+  "dependencies": [
+    {
+      "name": "drogon",
+      "features": [
+        "postgres"
+      ]
+    },
+    "libpq"
+  ]
+}

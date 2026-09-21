@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Orders - WaafiyyaMart</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                #0f172a;
+
+            color:
+                #f8fafc;
+        }
+
+
+        .page {
+            width: 100%;
+
+            max-width: 1100px;
+
+            margin: 0 auto;
+
+            padding:
+                40px 24px 60px;
+        }
+
+
+        .topbar {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+            margin-bottom: 40px;
+        }
+
+
+        .brand {
+            font-size: 28px;
+
+            font-weight: 800;
+
+            color: #ffffff;
+        }
+
+
+        .brand span {
+            color: #f97316;
+        }
+
+
+        .top-actions {
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .button {
+            display: inline-block;
+
+            padding:
+                11px 18px;
+
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            font-weight: 700;
+
+            border: 1px solid #334155;
+
+            color: #ffffff;
+
+            background: #172033;
+
+            cursor: pointer;
+        }
+
+
+        .button:hover {
+            background: #243047;
+        }
+
+
+        .button.primary {
+            background: #f97316;
+
+            border-color: #f97316;
+        }
+
+
+        .button.primary:hover {
+            background: #ea580c;
+        }
+
+
+        .heading {
+            margin-bottom: 28px;
+        }
+
+
+        .heading .eyebrow {
+            margin: 0 0 8px;
+
+            color: #fb923c;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            text-transform: uppercase;
+        }
+
+
+        .heading h1 {
+            margin: 0;
+
+            font-size: 42px;
+
+            line-height: 1.1;
+        }
+
+
+        .heading p {
+            color: #94a3b8;
+
+            font-size: 17px;
+
+            margin-top: 12px;
+        }
+
+
+        #ordersContainer {
+            display: grid;
+
+            gap: 20px;
+        }
+
+
+        .order-card {
+            background: #111827;
+
+            border: 1px solid #273449;
+
+            border-radius: 18px;
+
+            padding: 24px;
+
+            box-shadow:
+                0 15px 40px
+                rgba(0, 0, 0, 0.18);
+        }
+
+
+        .order-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            gap: 20px;
+
+            padding-bottom: 18px;
+
+            border-bottom:
+                1px solid #263247;
+        }
+
+
+        .order-number {
+            margin: 0;
+
+            font-size: 22px;
+
+            font-weight: 800;
+        }
+
+
+        .order-date {
+            margin-top: 7px;
+
+            color: #94a3b8;
+
+            font-size: 14px;
+        }
+
+
+        .status {
+            display: inline-block;
+
+            padding:
+                7px 12px;
+
+            border-radius: 999px;
+
+            background: #332315;
+
+            color: #fb923c;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            text-transform: capitalize;
+        }
+
+
+        .order-items {
+            margin-top: 18px;
+
+            display: grid;
+
+            gap: 10px;
+        }
+
+
+        .order-item {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+            padding:
+                14px 16px;
+
+            background: #172033;
+
+            border-radius: 12px;
+        }
+
+
+        .item-name {
+            font-weight: 700;
+        }
+
+
+        .item-details {
+            margin-top: 5px;
+
+            color: #94a3b8;
+
+            font-size: 14px;
+        }
+
+
+        .item-price {
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+
+        .order-footer {
+            display: flex;
+
+            justify-content: flex-end;
+
+            align-items: center;
+
+            margin-top: 20px;
+
+            padding-top: 18px;
+
+            border-top:
+                1px solid #263247;
+        }
+
+
+        .order-total {
+            font-size: 21px;
+
+            font-weight: 800;
+        }
+
+
+        .empty-state {
+            text-align: center;
+
+            padding:
+                60px 20px;
+
+            border:
+                1px dashed #334155;
+
+            border-radius: 18px;
+
+            background: #111827;
+        }
+
+
+        .empty-state h2 {
+            margin-top: 0;
+        }
+
+
+        .empty-state p {
+            color: #94a3b8;
+        }
+
+
+        .loading {
+            text-align: center;
+
+            padding: 50px;
+
+            color: #94a3b8;
+        }
+
+
+        .error {
+            padding: 18px;
+
+            border-radius: 12px;
+
+            background: #3f1d1d;
+
+            border:
+                1px solid #7f1d1d;
+
+            color: #fecaca;
+
+            text-align: center;
+        }
+
+
+        @media (max-width: 700px) {
+
+            .page {
+                padding:
+                    25px 16px 40px;
+            }
+
+
+            .topbar {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .heading h1 {
+                font-size: 34px;
+            }
+
+
+            .order-header {
+                flex-direction: column;
+            }
+
+
+            .order-item {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .order-footer {
+                justify-content: flex-start;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <main class="page">
+
+        <header class="topbar">
+
+            <div class="brand">
+                Waafiyya<span>Mart</span>
+            </div>
+
+
+            <div class="top-actions">
+
+                <a
+                    class="button"
+                    href="products.html"
+                >
+                    Back to Shop
+                </a>
+
+                <button
+                    class="button primary"
+                    id="refreshBtn"
+                >
+                    Refresh Orders
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <section class="heading">
+
+            <p class="eyebrow">
+                Account
+            </p>
+
+            <h1>
+                My Orders
+            </h1>
+
+            <p>
+                View your previous orders and order details.
+            </p>
+
+        </section>
+
+
+        <section id="ordersContainer">
+
+            <div class="loading">
+                Loading your orders...
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="order-history.js"></script>
+
+</body>
+
+</html>

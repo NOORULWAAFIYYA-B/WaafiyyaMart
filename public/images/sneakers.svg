@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" rx="24" fill="#172033"/>
+  <path d="M120 245
+           C180 245 220 225 270 170
+           L315 120
+           L365 170
+           C395 200 425 215 470 220
+           L510 225
+           C535 228 550 250 545 275
+           L545 295
+           L120 295
+           C90 295 75 270 85 250
+           C92 237 103 245 120 245 Z"
+        fill="#f97316" stroke="#ffffff" stroke-width="8"/>
+  <path d="M285 175 L370 215" stroke="#ffffff" stroke-width="8"/>
+  <path d="M260 195 L345 235" stroke="#ffffff" stroke-width="8"/>
+  <text x="300" y="360" text-anchor="middle"
+        font-family="Arial" font-size="28" font-weight="bold" fill="#ffffff">
+    Casual Sneakers
+  </text>
+</svg>

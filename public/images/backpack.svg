@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" rx="24" fill="#172033"/>
+  <path d="M210 130
+           C210 80 245 55 300 55
+           C355 55 390 80 390 130
+           L445 145
+           L465 335
+           L135 335
+           L155 145 Z"
+        fill="#f97316" stroke="#ffffff" stroke-width="8"/>
+  <path d="M230 130 C230 95 250 80 300 80 C350 80 370 95 370 130"
+        fill="none" stroke="#ffffff" stroke-width="10"/>
+  <rect x="215" y="205" width="170" height="85" rx="15"
+        fill="#172033" stroke="#ffffff" stroke-width="7"/>
+  <text x="300" y="360" text-anchor="middle"
+        font-family="Arial" font-size="28" font-weight="bold" fill="#ffffff">
+    College Backpack
+  </text>
+</svg>
