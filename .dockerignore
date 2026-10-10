@@ -1,0 +1,7 @@
+.git
+.gitignore
+build
+vcpkg_installed
+config/config.json
+.env
+Dockerfile.txt
