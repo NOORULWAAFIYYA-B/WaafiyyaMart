@@ -7,6 +7,7 @@ ENV VCPKG_ROOT=/opt/vcpkg
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     bison \
+    flex \
     cmake \
     ninja-build \
     pkg-config \
