@@ -16,6 +16,7 @@ add_executable(WaafiyyaMart
     controllers/ProductContoller.cpp
     controllers/OrdersController.cpp
     controllers/OrderHistoryController.cpp
+    controllers/AdminProductController.cpp
 
     repositories/UserRepository.cpp
 )

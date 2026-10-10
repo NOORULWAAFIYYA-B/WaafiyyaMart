@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Seller - WaafiyyaMart</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        button {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .add-btn {
+            background: #2563eb;
+            color: white;
+            margin-top: 18px;
+        }
+
+        .update-btn {
+            background: #16a34a;
+            color: white;
+            margin-top: 18px;
+        }
+
+        .cancel-btn {
+            background: #6b7280;
+            color: white;
+            margin-top: 18px;
+            margin-left: 8px;
+        }
+
+        .edit-btn {
+            background: #f59e0b;
+            color: white;
+            margin-right: 6px;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f3f4f6;
+        }
+
+        .actions {
+            white-space: nowrap;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>
+        WaafiyyaMart - Seller Dashboard
+    </h1>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- ADD PRODUCT -->
+
+    <div class="card">
+
+        <h2>
+            Add New Product
+        </h2>
+
+        <form id="addProductForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="productName">
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="productName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="productCategory">
+                        Category
+                    </label>
+
+                    <input
+                        type="text"
+                        id="productCategory"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="productPrice">
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productPrice"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="productStock">
+                        Stock
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productStock"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="productDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="productDescription"
+                        required
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="add-btn"
+            >
+                Add Product
+            </button>
+
+        </form>
+
+
+        <div
+            id="addMessage"
+            class="message"
+        ></div>
+
+    </div>
+
+
+
+    <!-- EDIT PRODUCT -->
+
+    <div
+        class="card hidden"
+        id="editCard"
+    >
+
+        <h2>
+            Edit Product
+        </h2>
+
+
+        <form id="editProductForm">
+
+            <input
+                type="hidden"
+                id="editProductId"
+            >
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label for="editProductName">
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editProductName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editProductCategory">
+                        Category
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editProductCategory"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editProductPrice">
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editProductPrice"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editProductStock">
+                        Stock
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editProductStock"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="editProductDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="editProductDescription"
+                        required
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="update-btn"
+            >
+                Update Product
+            </button>
+
+
+            <button
+                type="button"
+                class="cancel-btn"
+                id="cancelEditBtn"
+            >
+                Cancel
+            </button>
+
+        </form>
+
+
+        <div
+            id="editMessage"
+            class="message"
+        ></div>
+
+    </div>
+
+
+
+    <!-- PRODUCTS -->
+
+    <div class="card">
+
+        <h2>
+            All Products
+        </h2>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Name</th>
+
+                        <th>Description</th>
+
+                        <th>Price</th>
+
+                        <th>Stock</th>
+
+                        <th>Category</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="productTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            id="tableMessage"
+            class="message"
+        ></div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+    // ==================================================
+    // SELLER ROLE PROTECTION
+    // ==================================================
+
+    const loggedInUser = JSON.parse(
+        localStorage.getItem('waafiyyaUser') || 'null'
+    );
+
+
+    if (!loggedInUser) {
+
+        window.location.href = 'login.html';
+
+    }
+    else if (loggedInUser.role !== 'seller') {
+
+        window.location.href = 'products.html';
+
+    }
+
+
+
+    // ==================================================
+    // ELEMENTS
+    // ==================================================
+
+    const addProductForm =
+        document.getElementById("addProductForm");
+
+
+    const editProductForm =
+        document.getElementById("editProductForm");
+
+
+    const editCard =
+        document.getElementById("editCard");
+
+
+    const cancelEditBtn =
+        document.getElementById("cancelEditBtn");
+
+
+    const productTableBody =
+        document.getElementById("productTableBody");
+
+
+
+    // ==================================================
+    // MESSAGE FUNCTION
+    // ==================================================
+
+    function showMessage(
+        element,
+        message,
+        type
+    ) {
+
+        element.textContent = message;
+
+        element.className =
+            "message " + type;
+
+    }
+
+
+
+    // ==================================================
+    // LOAD PRODUCTS
+    // ==================================================
+
+    async function loadProducts() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/products"
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to load products."
+                );
+
+            }
+
+
+            productTableBody.innerHTML = "";
+
+
+            data.products.forEach(
+                product => {
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${product.id}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(product.name)}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(
+                                product.description
+                            )}
+                        </td>
+
+
+                        <td>
+                            ₹${Number(
+                                product.price
+                            ).toFixed(2)}
+                        </td>
+
+
+                        <td>
+                            ${product.stock}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(
+                                product.category
+                            )}
+                        </td>
+
+
+                        <td class="actions">
+
+                            <button
+                                class="edit-btn"
+                                onclick="editProduct(${product.id})"
+                            >
+                                Edit
+                            </button>
+
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteProduct(${product.id})"
+                            >
+                                Delete
+                            </button>
+
+                        </td>
+
+                    `;
+
+
+                    productTableBody.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                document.getElementById(
+                    "tableMessage"
+                ),
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+
+    // ==================================================
+    // ESCAPE HTML
+    // ==================================================
+
+    function escapeHtml(value) {
+
+        const div =
+            document.createElement("div");
+
+
+        div.textContent =
+            value ?? "";
+
+
+        return div.innerHTML;
+
+    }
+
+
+
+    // ==================================================
+    // ADD PRODUCT
+    // ==================================================
+
+    addProductForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const product = {
+
+                name:
+                    document.getElementById(
+                        "productName"
+                    ).value.trim(),
+
+
+                description:
+                    document.getElementById(
+                        "productDescription"
+                    ).value.trim(),
+
+
+                price:
+                    Number(
+                        document.getElementById(
+                            "productPrice"
+                        ).value
+                    ),
+
+
+                stock:
+                    Number(
+                        document.getElementById(
+                            "productStock"
+                        ).value
+                    ),
+
+
+                category:
+                    document.getElementById(
+                        "productCategory"
+                    ).value.trim()
+
+            };
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/admin/products",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    product
+                                )
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to add product."
+                    );
+
+                }
+
+
+                showMessage(
+                    document.getElementById(
+                        "addMessage"
+                    ),
+                    "Product added successfully.",
+                    "success"
+                );
+
+
+                addProductForm.reset();
+
+
+                await loadProducts();
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+
+                showMessage(
+                    document.getElementById(
+                        "addMessage"
+                    ),
+                    error.message,
+                    "error"
+                );
+
+            }
+
+        }
+    );
+
+
+
+    // ==================================================
+    // EDIT PRODUCT
+    // ==================================================
+
+    async function editProduct(productId) {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/products"
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to load products."
+                );
+
+            }
+
+
+            const product =
+                data.products.find(
+                    item =>
+                        item.id === productId
+                );
+
+
+            if (!product) {
+
+                alert(
+                    "Product not found."
+                );
+
+                return;
+
+            }
+
+
+            document.getElementById(
+                "editProductId"
+            ).value =
+                product.id;
+
+
+            document.getElementById(
+                "editProductName"
+            ).value =
+                product.name;
+
+
+            document.getElementById(
+                "editProductDescription"
+            ).value =
+                product.description;
+
+
+            document.getElementById(
+                "editProductPrice"
+            ).value =
+                product.price;
+
+
+            document.getElementById(
+                "editProductStock"
+            ).value =
+                product.stock;
+
+
+            document.getElementById(
+                "editProductCategory"
+            ).value =
+                product.category;
+
+
+            editCard.classList.remove(
+                "hidden"
+            );
+
+
+            editCard.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+
+            alert(
+                error.message
+            );
+
+        }
+
+    }
+
+
+
+    // ==================================================
+    // UPDATE PRODUCT
+    // ==================================================
+
+    editProductForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const productId =
+                document.getElementById(
+                    "editProductId"
+                ).value;
+
+
+            const product = {
+
+                name:
+                    document.getElementById(
+                        "editProductName"
+                    ).value.trim(),
+
+
+                description:
+                    document.getElementById(
+                        "editProductDescription"
+                    ).value.trim(),
+
+
+                price:
+                    Number(
+                        document.getElementById(
+                            "editProductPrice"
+                        ).value
+                    ),
+
+
+                stock:
+                    Number(
+                        document.getElementById(
+                            "editProductStock"
+                        ).value
+                    ),
+
+
+                category:
+                    document.getElementById(
+                        "editProductCategory"
+                    ).value.trim()
+
+            };
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/admin/products/${productId}`,
+                        {
+
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    product
+                                )
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to update product."
+                    );
+
+                }
+
+
+                showMessage(
+                    document.getElementById(
+                        "editMessage"
+                    ),
+                    "Product updated successfully.",
+                    "success"
+                );
+
+
+                await loadProducts();
+
+
+                setTimeout(
+                    () => {
+
+                        editCard.classList.add(
+                            "hidden"
+                        );
+
+                    },
+                    800
+                );
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+
+                showMessage(
+                    document.getElementById(
+                        "editMessage"
+                    ),
+                    error.message,
+                    "error"
+                );
+
+            }
+
+        }
+    );
+
+
+
+    // ==================================================
+    // CANCEL EDIT
+    // ==================================================
+
+    cancelEditBtn.addEventListener(
+        "click",
+        function() {
+
+            editCard.classList.add(
+                "hidden"
+            );
+
+
+            editProductForm.reset();
+
+        }
+    );
+
+
+
+    // ==================================================
+    // DELETE PRODUCT
+    // ==================================================
+
+    async function deleteProduct(productId) {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to delete this product?"
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/admin/products/${productId}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to delete product."
+                );
+
+            }
+
+
+            showMessage(
+                document.getElementById(
+                    "tableMessage"
+                ),
+                "Product deleted successfully.",
+                "success"
+            );
+
+
+            await loadProducts();
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                document.getElementById(
+                    "tableMessage"
+                ),
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+
+    // ==================================================
+    // INITIAL LOAD
+    // ==================================================
+
+    loadProducts();
+
+
+</script>
+
+</body>
+</html>

@@ -3,12 +3,17 @@
 // --------------------------------------------------
 
 async function postJson(url, payload) {
+
     const response = await fetch(url, {
+
         method: 'POST',
+
         headers: {
             'Content-Type': 'application/json'
         },
+
         body: JSON.stringify(payload)
+
     });
 
     const data = await response.json();
@@ -21,21 +26,31 @@ async function postJson(url, payload) {
 
 
 function getStoredUser() {
+
     try {
-        const raw = localStorage.getItem('waafiyyaUser');
+
+        const raw =
+            localStorage.getItem('waafiyyaUser');
+
         return raw ? JSON.parse(raw) : null;
+
     } catch (error) {
+
         return null;
     }
 }
 
 
 function setMessage(element, text, type) {
+
     if (!element) return;
 
     element.textContent = text;
 
-    element.classList.remove('success', 'error');
+    element.classList.remove(
+        'success',
+        'error'
+    );
 
     if (type) {
         element.classList.add(type);
@@ -44,15 +59,32 @@ function setMessage(element, text, type) {
 
 
 function redirectIfLoggedIn() {
+
     const user = getStoredUser();
 
-    const path = window.location.pathname.split('/').pop();
+    const path =
+        window.location.pathname
+            .split('/')
+            .pop();
 
     if (
         user &&
-        (path === 'login.html' || path === 'register.html')
+        (
+            path === 'login.html' ||
+            path === 'register.html'
+        )
     ) {
-        window.location.href = 'products.html';
+
+        if (user.role === 'seller') {
+
+            window.location.href =
+                'seller.html';
+
+        } else {
+
+            window.location.href =
+                'products.html';
+        }
     }
 }
 
@@ -61,170 +93,212 @@ function redirectIfLoggedIn() {
 // AUTHENTICATION
 // --------------------------------------------------
 
-const loginForm = document.getElementById('loginForm');
-const loginMessage = document.getElementById('loginMessage');
+const loginForm =
+    document.getElementById('loginForm');
 
-const registerForm = document.getElementById('registerForm');
-const registerMessage = document.getElementById('registerMessage');
+const loginMessage =
+    document.getElementById('loginMessage');
+
+const registerForm =
+    document.getElementById('registerForm');
+
+const registerMessage =
+    document.getElementById('registerMessage');
 
 
 if (document.body.dataset.page === 'auth') {
+
     redirectIfLoggedIn();
 }
 
 
-// ---------------- LOGIN ----------------
+// --------------------------------------------------
+// LOGIN
+// --------------------------------------------------
 
 if (loginForm && loginMessage) {
 
-    loginForm.addEventListener('submit', async (event) => {
+    loginForm.addEventListener(
+        'submit',
+        async (event) => {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
 
-        if (!email || !password) {
-            setMessage(
-                loginMessage,
-                'Please enter both your email and password.',
-                'error'
-            );
-            return;
-        }
+            const email =
+                document.getElementById(
+                    'email'
+                ).value.trim();
 
-        const isEmailValid =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-        if (!isEmailValid) {
-            setMessage(
-                loginMessage,
-                'Please enter a valid email address.',
-                'error'
-            );
-            return;
-        }
+            const password =
+                document.getElementById(
+                    'password'
+                ).value.trim();
 
-        try {
 
-            const { response, data } = await postJson(
-                '/api/login',
-                {
-                    email: email,
-                    password: password
-                }
-            );
+            if (!email || !password) {
 
-            if (!response.ok) {
                 setMessage(
                     loginMessage,
-                    data.message || 'Login failed.',
+                    'Please enter both your email and password.',
                     'error'
                 );
+
                 return;
             }
 
-            const user = {
-                ...data.user,
-                rememberMe:
-                    document.getElementById('rememberMe')?.checked || false
-            };
 
-            localStorage.setItem(
-                'waafiyyaUser',
-                JSON.stringify(user)
-            );
+            const isEmailValid =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                    email
+                );
 
-            setMessage(
-                loginMessage,
-                data.message || 'Login successful!',
-                'success'
-            );
 
-            loginForm.reset();
+            if (!isEmailValid) {
 
-            setTimeout(() => {
-                window.location.href = 'products.html';
-            }, 600);
+                setMessage(
+                    loginMessage,
+                    'Please enter a valid email address.',
+                    'error'
+                );
 
-        } catch (error) {
+                return;
+            }
 
-            console.error('Login error:', error);
 
-            setMessage(
-                loginMessage,
-                'Unable to reach the server. Please try again.',
-                'error'
-            );
+            try {
+
+                const { response, data } =
+                    await postJson(
+                        '/api/login',
+                        {
+                            email: email,
+                            password: password
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    setMessage(
+                        loginMessage,
+                        data.message ||
+                            'Login failed.',
+                        'error'
+                    );
+
+                    return;
+                }
+
+
+                const user = {
+
+                    ...data.user,
+
+                    rememberMe:
+                        document.getElementById(
+                            'rememberMe'
+                        )?.checked || false
+
+                };
+
+
+                localStorage.setItem(
+                    'waafiyyaUser',
+                    JSON.stringify(user)
+                );
+
+
+                setMessage(
+                    loginMessage,
+                    data.message ||
+                        'Login successful!',
+                    'success'
+                );
+
+
+                loginForm.reset();
+
+
+                // ------------------------------------------
+                // ROLE-BASED REDIRECT
+                // ------------------------------------------
+
+                setTimeout(() => {
+
+                    if (user.role === 'seller') {
+
+                        window.location.href =
+                            'seller.html';
+
+                    } else {
+
+                        window.location.href =
+                            'products.html';
+                    }
+
+                }, 600);
+
+            }
+            catch (error) {
+
+                console.error(
+                    'Login error:',
+                    error
+                );
+
+                setMessage(
+                    loginMessage,
+                    'Unable to reach the server. Please try again.',
+                    'error'
+                );
+            }
         }
-    });
+    );
 }
 
 
-// ---------------- REGISTER ----------------
+// --------------------------------------------------
+// REGISTER
+// --------------------------------------------------
 
 if (registerForm && registerMessage) {
 
-    registerForm.addEventListener('submit', async (event) => {
+    registerForm.addEventListener(
+        'submit',
+        async (event) => {
 
-        event.preventDefault();
-
-        const fullName =
-            document.getElementById('fullName').value.trim();
-
-        const email =
-            document.getElementById('email').value.trim();
-
-        const password =
-            document.getElementById('password').value.trim();
+            event.preventDefault();
 
 
-        if (!fullName || !email || !password) {
-
-            setMessage(
-                registerMessage,
-                'Please fill in all fields.',
-                'error'
-            );
-
-            return;
-        }
+            const fullName =
+                document.getElementById(
+                    'fullName'
+                ).value.trim();
 
 
-        const isEmailValid =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            const email =
+                document.getElementById(
+                    'email'
+                ).value.trim();
 
 
-        if (!isEmailValid) {
-
-            setMessage(
-                registerMessage,
-                'Please enter a valid email address.',
-                'error'
-            );
-
-            return;
-        }
+            const password =
+                document.getElementById(
+                    'password'
+                ).value.trim();
 
 
-        try {
-
-            const { response, data } =
-                await postJson(
-                    '/api/register',
-                    {
-                        full_name: fullName,
-                        email: email,
-                        password: password
-                    }
-                );
-
-
-            if (!response.ok) {
+            if (
+                !fullName ||
+                !email ||
+                !password
+            ) {
 
                 setMessage(
                     registerMessage,
-                    data.message || 'Registration failed.',
+                    'Please fill in all fields.',
                     'error'
                 );
 
@@ -232,32 +306,84 @@ if (registerForm && registerMessage) {
             }
 
 
-            setMessage(
-                registerMessage,
-                data.message || 'Registration successful.',
-                'success'
-            );
+            const isEmailValid =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                    email
+                );
 
 
-            registerForm.reset();
+            if (!isEmailValid) {
+
+                setMessage(
+                    registerMessage,
+                    'Please enter a valid email address.',
+                    'error'
+                );
+
+                return;
+            }
 
 
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 800);
+            try {
+
+                const { response, data } =
+                    await postJson(
+                        '/api/register',
+                        {
+                            full_name: fullName,
+                            email: email,
+                            password: password
+                        }
+                    );
 
 
-        } catch (error) {
+                if (!response.ok) {
 
-            console.error('Registration error:', error);
+                    setMessage(
+                        registerMessage,
+                        data.message ||
+                            'Registration failed.',
+                        'error'
+                    );
 
-            setMessage(
-                registerMessage,
-                'Unable to reach the server. Please try again.',
-                'error'
-            );
+                    return;
+                }
+
+
+                setMessage(
+                    registerMessage,
+                    data.message ||
+                        'Registration successful.',
+                    'success'
+                );
+
+
+                registerForm.reset();
+
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        'login.html';
+
+                }, 800);
+
+            }
+            catch (error) {
+
+                console.error(
+                    'Registration error:',
+                    error
+                );
+
+                setMessage(
+                    registerMessage,
+                    'Unable to reach the server. Please try again.',
+                    'error'
+                );
+            }
         }
-    });
+    );
 }
 
 
@@ -268,25 +394,43 @@ if (registerForm && registerMessage) {
 if (document.body.dataset.page === 'shop') {
 
     const productGrid =
-        document.getElementById('productGrid');
+        document.getElementById(
+            'productGrid'
+        );
+
 
     const cartItemsList =
-        document.getElementById('cartItems');
+        document.getElementById(
+            'cartItems'
+        );
+
 
     const cartCount =
-        document.getElementById('cartCount');
+        document.getElementById(
+            'cartCount'
+        );
+
 
     const cartTotal =
-        document.getElementById('cartTotal');
+        document.getElementById(
+            'cartTotal'
+        );
+
 
     const orderMessage =
-        document.getElementById('orderMessage');
+        document.getElementById(
+            'orderMessage'
+        );
+
 
     const userLabel =
-        document.getElementById('userLabel');
+        document.getElementById(
+            'userLabel'
+        );
 
 
-    const user = getStoredUser();
+    const user =
+        getStoredUser();
 
 
     // --------------------------------------------------
@@ -295,13 +439,16 @@ if (document.body.dataset.page === 'shop') {
 
     if (!user) {
 
-        window.location.href = 'login.html';
+        window.location.href =
+            'login.html';
 
     } else {
 
         if (userLabel) {
+
             userLabel.textContent =
-                user.full_name || user.email;
+                user.full_name ||
+                user.email;
         }
     }
 
@@ -310,9 +457,12 @@ if (document.body.dataset.page === 'shop') {
     // LOAD CART FROM BROWSER STORAGE
     // --------------------------------------------------
 
-    let cart = JSON.parse(
-        localStorage.getItem('waafiyyaCart') || '[]'
-    );
+    let cart =
+        JSON.parse(
+            localStorage.getItem(
+                'waafiyyaCart'
+            ) || '[]'
+        );
 
 
     function saveCart() {
@@ -327,8 +477,14 @@ if (document.body.dataset.page === 'shop') {
     function getCartTotal() {
 
         return cart.reduce(
+
             (sum, item) =>
-                sum + (item.price * item.quantity),
+                sum +
+                (
+                    item.price *
+                    item.quantity
+                ),
+
             0
         );
     }
@@ -342,6 +498,7 @@ if (document.body.dataset.page === 'shop') {
 
         if (!cartItemsList) return;
 
+
         cartItemsList.innerHTML = '';
 
 
@@ -350,12 +507,18 @@ if (document.body.dataset.page === 'shop') {
             cartItemsList.innerHTML =
                 '<li class="empty-state">Your cart is empty.</li>';
 
+
             if (cartTotal) {
-                cartTotal.textContent = '$0.00';
+
+                cartTotal.textContent =
+                    '$0.00';
             }
 
+
             if (cartCount) {
-                cartCount.textContent = '0';
+
+                cartCount.textContent =
+                    '0';
             }
 
             return;
@@ -364,43 +527,70 @@ if (document.body.dataset.page === 'shop') {
 
         cart.forEach((item) => {
 
-            const li = document.createElement('li');
+            const li =
+                document.createElement(
+                    'li'
+                );
 
-            li.className = 'cart-item';
+
+            li.className =
+                'cart-item';
 
 
             li.innerHTML = `
-                <div>
-                    <strong>${item.name}</strong>
-                    <span>Qty: ${item.quantity}</span>
-                </div>
 
                 <div>
+
                     <strong>
-                        $${(item.price * item.quantity).toFixed(2)}
+                        ${item.name}
                     </strong>
+
+                    <span>
+                        Qty: ${item.quantity}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        $${(
+                            item.price *
+                            item.quantity
+                        ).toFixed(2)}
+                    </strong>
+
 
                     <button
                         class="remove-btn"
                         data-id="${item.id}">
                         Remove
                     </button>
+
                 </div>
+
             `;
 
 
             cartItemsList.appendChild(li);
+
         });
 
 
         if (cartCount) {
 
-            cartCount.textContent = String(
-                cart.reduce(
-                    (sum, item) => sum + item.quantity,
-                    0
-                )
-            );
+            cartCount.textContent =
+                String(
+
+                    cart.reduce(
+                        (sum, item) =>
+                            sum +
+                            item.quantity,
+                        0
+                    )
+
+                );
         }
 
 
@@ -418,18 +608,36 @@ if (document.body.dataset.page === 'shop') {
 
     function getProductImage(product) {
 
-        if (product.image_url && product.image_url.trim() !== '') {
+        if (
+            product.image_url &&
+            product.image_url.trim() !== ''
+        ) {
+
             return product.image_url;
         }
 
+
         const productImages = {
-            'Classic T-Shirt': '/images/tshirt.svg',
-            'Casual Sneakers': '/images/sneakers.svg',
-            'College Backpack': '/images/backpack.svg',
-            'Stainless Steel Bottle': '/images/bottle.svg'
+
+            'Classic T-Shirt':
+                '/images/tshirt.svg',
+
+            'Casual Sneakers':
+                '/images/sneakers.svg',
+
+            'College Backpack':
+                '/images/backpack.svg',
+
+            'Stainless Steel Bottle':
+                '/images/bottle.svg'
+
         };
 
-        return productImages[product.name] || '/images/tshirt.svg';
+
+        return (
+            productImages[product.name] ||
+            '/images/tshirt.svg'
+        );
     }
 
 
@@ -442,14 +650,19 @@ if (document.body.dataset.page === 'shop') {
         try {
 
             const response =
-                await fetch('/api/products');
+                await fetch(
+                    '/api/products'
+                );
 
 
             const data =
                 await response.json();
 
 
-            if (!response.ok || !Array.isArray(data)) {
+            if (
+                !response.ok ||
+                !Array.isArray(data)
+            ) {
 
                 throw new Error(
                     'Unable to load products'
@@ -461,14 +674,19 @@ if (document.body.dataset.page === 'shop') {
 
 
             productGrid.innerHTML =
+
                 data.map((product) => {
 
                     const image =
-                        getProductImage(product);
+                        getProductImage(
+                            product
+                        );
 
 
                     return `
-                        <article class="product-card">
+
+                        <article
+                            class="product-card">
 
                             <img
                                 src="${image}"
@@ -476,32 +694,48 @@ if (document.body.dataset.page === 'shop') {
                                 loading="lazy"
                             />
 
-                            <div class="product-info">
 
-                                <span class="product-tag">
+                            <div
+                                class="product-info">
+
+                                <span
+                                    class="product-tag">
+
                                     ${product.category}
+
                                 </span>
+
 
                                 <h3>
                                     ${product.name}
                                 </h3>
 
+
                                 <p>
                                     ${product.description}
                                 </p>
 
-                                <div class="product-footer">
+
+                                <div
+                                    class="product-footer">
 
                                     <strong>
-                                        $${Number(product.price).toFixed(2)}
+
+                                        $${Number(
+                                            product.price
+                                        ).toFixed(2)}
+
                                     </strong>
+
 
                                     <button
                                         class="add-btn"
                                         data-id="${product.id}"
                                         data-name="${product.name}"
                                         data-price="${product.price}">
+
                                         Add to cart
+
                                     </button>
 
                                 </div>
@@ -509,12 +743,13 @@ if (document.body.dataset.page === 'shop') {
                             </div>
 
                         </article>
+
                     `;
 
                 }).join('');
 
-
-        } catch (error) {
+        }
+        catch (error) {
 
             console.error(
                 'Product loading error:',
@@ -535,79 +770,97 @@ if (document.body.dataset.page === 'shop') {
     // ADD / REMOVE CART ITEMS
     // --------------------------------------------------
 
-    document.addEventListener('click', (event) => {
+    document.addEventListener(
+        'click',
+        (event) => {
 
 
-        // ---------------- ADD TO CART ----------------
+            // ------------------------------------------
+            // ADD TO CART
+            // ------------------------------------------
 
-        const addBtn =
-            event.target.closest('.add-btn');
-
-
-        if (addBtn) {
-
-            const product = {
-
-                id: Number(
-                    addBtn.dataset.id
-                ),
-
-                name:
-                    addBtn.dataset.name,
-
-                price: Number(
-                    addBtn.dataset.price
-                ),
-
-                quantity: 1
-            };
-
-
-            const existing =
-                cart.find(
-                    (item) => item.id === product.id
+            const addBtn =
+                event.target.closest(
+                    '.add-btn'
                 );
 
 
-            if (existing) {
+            if (addBtn) {
 
-                existing.quantity += 1;
+                const product = {
 
-            } else {
+                    id:
+                        Number(
+                            addBtn.dataset.id
+                        ),
 
-                cart.push(product);
+                    name:
+                        addBtn.dataset.name,
+
+                    price:
+                        Number(
+                            addBtn.dataset.price
+                        ),
+
+                    quantity: 1
+                };
+
+
+                const existing =
+                    cart.find(
+                        (item) =>
+                            item.id ===
+                            product.id
+                    );
+
+
+                if (existing) {
+
+                    existing.quantity += 1;
+
+                } else {
+
+                    cart.push(product);
+                }
+
+
+                saveCart();
+
+                renderCart();
             }
 
 
-            saveCart();
+            // ------------------------------------------
+            // REMOVE FROM CART
+            // ------------------------------------------
 
-            renderCart();
-        }
-
-
-        // ---------------- REMOVE FROM CART ----------------
-
-        const removeBtn =
-            event.target.closest('.remove-btn');
-
-
-        if (removeBtn) {
-
-            const id =
-                Number(removeBtn.dataset.id);
-
-
-            cart =
-                cart.filter(
-                    (item) => item.id !== id
+            const removeBtn =
+                event.target.closest(
+                    '.remove-btn'
                 );
 
 
-            saveCart();
+            if (removeBtn) {
 
-            renderCart();
+                const id =
+                    Number(
+                        removeBtn.dataset.id
+                    );
+
+
+                cart =
+                    cart.filter(
+                        (item) =>
+                            item.id !== id
+                    );
+
+
+                saveCart();
+
+                renderCart();
+            }
         }
-    });
+    );
 
 
     // --------------------------------------------------
@@ -615,7 +868,9 @@ if (document.body.dataset.page === 'shop') {
     // --------------------------------------------------
 
     const placeOrderBtn =
-        document.getElementById('placeOrderBtn');
+        document.getElementById(
+            'placeOrderBtn'
+        );
 
 
     if (placeOrderBtn) {
@@ -639,20 +894,33 @@ if (document.body.dataset.page === 'shop') {
 
                 try {
 
-                    const { response, data } =
-                        await postJson(
-                            '/api/orders',
-                            {
-                                user_id: user.id,
+                    const {
+                        response,
+                        data
+                    } = await postJson(
 
-                                items: cart.map(
+                        '/api/orders',
+
+                        {
+
+                            user_id:
+                                user.id,
+
+                            items:
+                                cart.map(
                                     (item) => ({
-                                        product_id: item.id,
-                                        quantity: item.quantity
+
+                                        product_id:
+                                            item.id,
+
+                                        quantity:
+                                            item.quantity
+
                                     })
                                 )
-                            }
-                        );
+
+                        }
+                    );
 
 
                     if (!response.ok) {
@@ -668,7 +936,8 @@ if (document.body.dataset.page === 'shop') {
                     }
 
 
-                    // Clear cart after successful order
+                    // Clear cart
+                    // after successful order
 
                     cart = [];
 
@@ -679,18 +948,22 @@ if (document.body.dataset.page === 'shop') {
 
                     const total =
                         Number(
-                            data.order?.total_amount || 0
+                            data.order
+                                ?.total_amount ||
+                            0
                         ).toFixed(2);
 
 
                     setMessage(
                         orderMessage,
+
                         `${data.message} Total: $${total}`,
+
                         'success'
                     );
 
-
-                } catch (error) {
+                }
+                catch (error) {
 
                     console.error(
                         'Order error:',
@@ -716,4 +989,5 @@ if (document.body.dataset.page === 'shop') {
     renderCart();
 
     loadProducts();
+
 }
