@@ -1,8 +1,9 @@
-
+```dockerfile
 FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV VCPKG_ROOT=/opt/vcpkg
+ENV VCPKG_MAX_CONCURRENCY=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -38,9 +39,9 @@ COPY . .
 RUN cmake -S . -B build \
     -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
     -DCMAKE_BUILD_TYPE=Release \
-    && cmake --build build --config Release -j2
+    && cmake --build build --config Release -j1
 
 EXPOSE 10000
 
 CMD ["python3", "docker-entrypoint.py"]
-
+```
