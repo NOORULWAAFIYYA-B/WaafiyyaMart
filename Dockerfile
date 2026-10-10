@@ -1,4 +1,4 @@
-
+```dockerfile
 FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -43,3 +43,4 @@ RUN cmake -S . -B build \
 EXPOSE 10000
 
 CMD ["python3", "docker-entrypoint.py"]
+```
