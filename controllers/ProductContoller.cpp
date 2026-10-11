@@ -15,6 +15,7 @@ void ProductContoller::getProducts(
             "FROM products "
             "ORDER BY id"
         );
+        LOG_INFO << "Products query returned " << result.size() << " rows";
 
         Json::Value products(Json::arrayValue);
 
