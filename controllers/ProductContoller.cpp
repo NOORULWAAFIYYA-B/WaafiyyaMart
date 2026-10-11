@@ -6,6 +6,7 @@ void ProductContoller::getProducts(
     const drogon::HttpRequestPtr& req,
     std::function<void(const drogon::HttpResponsePtr&)>&& callback)
 {
+    LOG_INFO << "GET /api/products controller reached";
     try
     {
         auto dbClient = drogon::app().getDbClient("default");
