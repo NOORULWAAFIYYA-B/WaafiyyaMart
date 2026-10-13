@@ -19,6 +19,17 @@ CREATE TABLE IF NOT EXISTS products (
     image_url TEXT,
     stock INTEGER NOT NULL DEFAULT 0,
     category TEXT NOT NULL DEFAULT 'general',
+    seller_id INTEGER REFERENCES users(id),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS seller_id INTEGER REFERENCES users(id);
+
+CREATE TABLE IF NOT EXISTS user_sessions (
+    token_hash CHAR(64) PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -55,6 +66,12 @@ CREATE INDEX IF NOT EXISTS idx_users_email
 
 CREATE INDEX IF NOT EXISTS idx_products_category
     ON products(category);
+
+CREATE INDEX IF NOT EXISTS idx_products_seller_id
+    ON products(seller_id);
+
+CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id
+    ON user_sessions(user_id);
 
 CREATE INDEX IF NOT EXISTS idx_orders_user_id
     ON orders(user_id);

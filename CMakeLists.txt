@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Drogon CONFIG REQUIRED)
 find_package(PostgreSQL REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 add_executable(WaafiyyaMart
 
@@ -17,8 +18,11 @@ add_executable(WaafiyyaMart
     controllers/OrdersController.cpp
     controllers/OrderHistoryController.cpp
     controllers/AdminProductController.cpp
+    controllers/ProductImageController.cpp
 
     repositories/UserRepository.cpp
+    services/AuthSession.cpp
+    services/ProductImageStorage.cpp
 )
 
 target_link_libraries(WaafiyyaMart
@@ -27,6 +31,7 @@ target_link_libraries(WaafiyyaMart
 
     Drogon::Drogon
     PostgreSQL::PostgreSQL
+    OpenSSL::Crypto
 )
 
 target_include_directories(WaafiyyaMart

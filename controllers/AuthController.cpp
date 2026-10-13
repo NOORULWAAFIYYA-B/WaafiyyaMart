@@ -1,6 +1,7 @@
 
 #include "AuthController.h"
 #include "../repositories/UserRepository.h"
+#include "../services/AuthSession.h"
 #include <drogon/drogon.h>
 #include <string>
 
@@ -139,6 +140,8 @@ void AuthController::loginUser(
         user["full_name"] = result[0]["full_name"].as<std::string>();
         user["email"] = result[0]["email"].as<std::string>();
         user["role"] = result[0]["role"].as<std::string>();
+        user["token"] = AuthSession::createSession(
+            result[0]["id"].as<int>());
 
         Json::Value responseData;
         responseData["message"] = "Login successful";
@@ -157,6 +160,35 @@ void AuthController::loginUser(
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(
             Json::Value{{"message", "Database error"}});
+        response->setStatusCode(drogon::k500InternalServerError);
+        callback(response);
+    }
+}
+
+void AuthController::logoutUser(
+    const drogon::HttpRequestPtr& req,
+    std::function<void(const drogon::HttpResponsePtr&)>&& callback)
+{
+    try
+    {
+        if (!AuthSession::authenticate(req))
+        {
+            auto response = drogon::HttpResponse::newHttpJsonResponse(
+                Json::Value{{"message", "Authentication required"}});
+            response->setStatusCode(drogon::k401Unauthorized);
+            callback(response);
+            return;
+        }
+
+        AuthSession::revoke(req);
+        callback(drogon::HttpResponse::newHttpJsonResponse(
+            Json::Value{{"message", "Logged out successfully"}}));
+    }
+    catch (const std::exception& error)
+    {
+        LOG_ERROR << "Logout error: " << error.what();
+        auto response = drogon::HttpResponse::newHttpJsonResponse(
+            Json::Value{{"message", "Unable to log out"}});
         response->setStatusCode(drogon::k500InternalServerError);
         callback(response);
     }

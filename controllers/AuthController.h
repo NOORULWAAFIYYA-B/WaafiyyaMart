@@ -15,6 +15,10 @@ public:
                   "/api/login",
                   drogon::Post);
 
+    ADD_METHOD_TO(AuthController::logoutUser,
+                  "/api/logout",
+                  drogon::Post);
+
     METHOD_LIST_END
 
     void registerUser(const drogon::HttpRequestPtr& req,
@@ -22,4 +26,7 @@ public:
 
     void loginUser(const drogon::HttpRequestPtr& req,
                    std::function<void(const drogon::HttpResponsePtr&)>&& callback);
+
+    void logoutUser(const drogon::HttpRequestPtr& req,
+                    std::function<void(const drogon::HttpResponsePtr&)>&& callback);
 };

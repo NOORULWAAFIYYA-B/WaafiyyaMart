@@ -242,21 +242,33 @@ button:hover {
 }
 
 .product-card {
+  display: flex;
+  flex-direction: column;
   background: rgba(15, 23, 42, 0.7);
   border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 18px;
   overflow: hidden;
+  min-width: 0;
 }
 
 .product-card img {
   width: 100%;
   height: 200px;
+  flex: 0 0 200px;
   object-fit: cover;
   display: block;
+  background: #e2e8f0;
 }
 
 .product-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: 16px;
+}
+
+.product-info .product-footer {
+  margin-top: auto;
 }
 
 .product-info h3 {
@@ -284,6 +296,33 @@ button:hover {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+}
+
+.product-filters {
+  display: grid;
+  grid-template-columns: auto minmax(160px, 1fr) auto minmax(150px, 220px);
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 20px;
+}
+
+.product-filters label {
+  color: var(--muted);
+}
+
+.product-filters input,
+.product-filters select {
+  min-width: 0;
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  color: white;
+  padding: 11px 12px;
+  font-size: 1rem;
+}
+
+.product-filters select option {
+  color: #0f172a;
 }
 
 .add-btn,
@@ -349,6 +388,12 @@ button:hover {
 
 @media (max-width: 920px) {
   .shop-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .product-filters {
     grid-template-columns: 1fr;
   }
 }

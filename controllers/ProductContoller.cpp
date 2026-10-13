@@ -16,17 +16,6 @@ void ProductContoller::getProducts(
             "FROM products "
             "ORDER BY id"
         );
-        auto check = dbClient->execSqlSync(
-    "SELECT current_database(), current_schema(), "
-    "(SELECT COUNT(*) FROM public.products) AS product_count"
-);
-
-        LOG_INFO << "DB CHECK: database="
-            << check[0]["current_database"].as<std::string>()
-            << ", schema="
-            << check[0]["current_schema"].as<std::string>()
-            << ", product_count="
-            << check[0]["product_count"].as<long long>();
         LOG_INFO << "Products query returned " << result.size() << " rows";
 
         Json::Value products(Json::arrayValue);
