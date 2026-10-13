@@ -615,20 +615,32 @@ if (document.body.dataset.page === 'shop') {
     // PRODUCT IMAGE AND FILTERING
     // --------------------------------------------------
 
+    function getProductFallbackImage(product) {
+        const category = String(product.category || '').trim().toLowerCase();
+        const fallbackByCategory = {
+            clothing: '/images/tshirt.svg',
+            footwear: '/images/sneakers.svg',
+            bags: '/images/backpack.svg',
+            accessories: '/images/bottle.svg'
+        };
+        return fallbackByCategory[category] || '/images/product-placeholder.svg';
+    }
+
     function getProductImage(product) {
+        const fallback = getProductFallbackImage(product);
         if (typeof product.image_url !== 'string' || !product.image_url.trim()) {
-            return '/images/product-placeholder.svg';
+            return fallback;
         }
 
         try {
             const imageUrl = new URL(product.image_url, window.location.origin);
             if (imageUrl.protocol !== 'https:' &&
                 imageUrl.origin !== window.location.origin) {
-                return '/images/product-placeholder.svg';
+                return fallback;
             }
             return imageUrl.href;
         } catch {
-            return '/images/product-placeholder.svg';
+            return fallback;
         }
     }
 
@@ -669,7 +681,7 @@ if (document.body.dataset.page === 'shop') {
             image.loading = 'lazy';
             image.addEventListener('error', () => {
                 image.onerror = null;
-                image.src = '/images/product-placeholder.svg';
+                image.src = getProductFallbackImage(product);
             });
 
             const info = document.createElement('div');

@@ -44,18 +44,30 @@ async function readResponse(response) {
     throw new Error(text || `Request failed (${response.status}).`);
 }
 
-function safeImageUrl(value) {
+function productFallbackImage(category) {
+    const fallbackByCategory = {
+        clothing: '/images/tshirt.svg',
+        footwear: '/images/sneakers.svg',
+        bags: '/images/backpack.svg',
+        accessories: '/images/bottle.svg'
+    };
+    return fallbackByCategory[String(category || '').trim().toLowerCase()] ||
+        fallbackImage;
+}
+
+function safeImageUrl(value, category) {
+    const fallback = productFallbackImage(category);
     if (typeof value !== 'string' || !value.trim()) {
-        return fallbackImage;
+        return fallback;
     }
     try {
         const parsed = new URL(value, window.location.origin);
         if (parsed.protocol !== 'https:' && parsed.origin !== window.location.origin) {
-            return fallbackImage;
+            return fallback;
         }
         return parsed.href;
     } catch {
-        return fallbackImage;
+        return fallback;
     }
 }
 
@@ -106,15 +118,15 @@ function appendProductFields(data, product) {
     Object.entries(product).forEach(([key, value]) => data.append(key, value));
 }
 
-function makeImage(url, alt, className) {
+function makeImage(url, alt, className, category) {
     const image = document.createElement('img');
-    image.src = safeImageUrl(url);
+    image.src = safeImageUrl(url, category);
     image.alt = alt;
     image.className = className;
     image.loading = 'lazy';
     image.addEventListener('error', () => {
         image.onerror = null;
-        image.src = fallbackImage;
+        image.src = productFallbackImage(category);
     });
     return image;
 }
@@ -134,7 +146,12 @@ function renderProducts() {
     products.forEach((product) => {
         const row = document.createElement('tr');
         const imageCell = document.createElement('td');
-        imageCell.appendChild(makeImage(product.image_url, product.name, 'product-thumbnail'));
+        imageCell.appendChild(makeImage(
+            product.image_url,
+            product.name,
+            'product-thumbnail',
+            product.category
+        ));
         row.appendChild(imageCell);
         [product.name, `₹${Number(product.price).toFixed(2)}`, product.category, String(product.stock)]
             .forEach((value) => {
@@ -256,10 +273,10 @@ function beginEdit(productId) {
     document.getElementById('editProductCategory').value = product.category;
     document.getElementById('editProductImage').value = '';
     const preview = document.getElementById('editProductImagePreview');
-    preview.src = safeImageUrl(product.image_url);
+    preview.src = safeImageUrl(product.image_url, product.category);
     preview.onerror = () => {
         preview.onerror = null;
-        preview.src = fallbackImage;
+        preview.src = productFallbackImage(product.category);
     };
     if (editPreviewUrl) {
         URL.revokeObjectURL(editPreviewUrl);

@@ -45,6 +45,12 @@ For local development, the image directory defaults to `./uploads` when `PRODUCT
 
 Images are limited to 5 MiB and their JPEG, PNG, or WebP file signatures are checked on the server. The browser-supplied filename and content type are not used. Uploaded image URLs are stored in `products.image_url`.
 
+Some legacy catalog records have an empty `image_url`; this is why they cannot
+show an uploaded photo. The storefront uses the existing local category
+illustrations for clothing, footwear, bags, and accessories, and a neutral
+placeholder when no matching illustration or saved image is available. Existing
+non-empty URLs are preserved and used as-is when they load successfully.
+
 ## Seller sessions and existing products
 
 Successful logins receive a random bearer token. Seller product endpoints require `Authorization: Bearer <token>` and verify the seller role and product ownership against PostgreSQL. Tokens are stored as SHA-256 hashes in `user_sessions` and expire after 30 days; logout revokes the token.
