@@ -1,3 +1,4 @@
+
 #include "UserRepository.h"
 
 #include <drogon/drogon.h>
@@ -9,12 +10,17 @@ UserRepository::UserRepository()
 bool UserRepository::createUser(
     const std::string& fullName,
     const std::string& email,
-    const std::string& passwordHash
-)
+    const std::string& passwordHash)
 {
     try
     {
         auto dbClient = drogon::app().getDbClient("default");
+
+        if (!dbClient)
+        {
+            LOG_ERROR << "Create user failed: database client unavailable";
+            return false;
+        }
 
         dbClient->execSqlSync(
             "INSERT INTO users (full_name, email, password_hash) "
@@ -39,12 +45,18 @@ bool UserRepository::emailExists(const std::string& email)
     {
         auto dbClient = drogon::app().getDbClient("default");
 
+        if (!dbClient)
+        {
+            LOG_ERROR << "Check email failed: database client unavailable";
+            return false;
+        }
+
         auto result = dbClient->execSqlSync(
             "SELECT id FROM users WHERE email = $1 LIMIT 1",
             email
         );
 
-        return result.size() > 0;
+        return !result.empty();
     }
     catch (const std::exception& e)
     {
@@ -52,3 +64,4 @@ bool UserRepository::emailExists(const std::string& email)
         return false;
     }
 }
+

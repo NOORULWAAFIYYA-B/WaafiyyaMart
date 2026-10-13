@@ -1,0 +1,15 @@
+id,name,description,price,image_url,stock,category,created_at
+1,Classic T-Shirt,Comfortable cotton t-shirt for everyday wear.,499.00,"",38,clothing,2026-09-20 19:23:22.540173
+2,Casual Sneakers,Lightweight sneakers for everyday use.,1299.00,"",8,footwear,2026-09-20 19:23:22.540173
+3,College Backpack,Durable backpack suitable for college and travel.,899.00,"",5,bags,2026-09-20 19:23:22.540173
+4,Stainless Steel Bottle,Reusable stainless steel water bottle.,399.00,"",22,accessories,2026-09-20 19:23:22.540173
+6,Notebook,200 pages ruled notebook,100.00,,50,general,2026-09-21 12:29:35.109743
+10,Pen,blue and smooth pen,20.00,,100,Stationery,2026-09-21 14:32:46.260582
+11,Pen,Black smooth pen,20.00,,100,Stationery,2026-09-21 14:34:53.159543
+12,Sunscreen,"uv protection,50spa++",600.00,,500,skincare,2026-09-21 14:41:27.827394
+14,Flower vase,cute pink flower vase for gardens,450.00,,22,showcase,2026-09-21 15:05:48.511483
+15,Classic T-Shirt,Soft cotton everyday tee,29.99,https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80,25,Fashion,2026-10-11 18:49:41.65641
+16,Wireless Headphones,Noise cancelling over-ear sound,149.99,https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=600&q=80,13,Electronics,2026-10-11 18:49:41.65641
+17,Coffee Grinder,Fresh grounds for every morning,59.50,https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=600&q=80,16,Home,2026-10-11 18:49:41.65641
+18,Running Shoes,Lightweight daily training pair,89.99,https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80,22,Sports,2026-10-11 18:49:41.65641
+19,Smart Watch,Track fitness and notifications,199.00,https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80,12,Electronics,2026-10-11 18:49:41.65641

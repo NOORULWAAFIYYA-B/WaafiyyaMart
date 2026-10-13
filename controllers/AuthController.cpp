@@ -1,8 +1,8 @@
+
 #include "AuthController.h"
-
 #include "../repositories/UserRepository.h"
-
 #include <drogon/drogon.h>
+#include <string>
 
 void AuthController::registerUser(
     const drogon::HttpRequestPtr& req,
@@ -13,9 +13,7 @@ void AuthController::registerUser(
     if (!json)
     {
         auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Invalid JSON"}}
-        );
-
+            Json::Value{{"message", "Invalid JSON"}});
         response->setStatusCode(drogon::k400BadRequest);
         callback(response);
         return;
@@ -28,9 +26,7 @@ void AuthController::registerUser(
     if (fullName.empty() || email.empty() || password.empty())
     {
         auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "All fields are required"}}
-        );
-
+            Json::Value{{"message", "All fields are required"}});
         response->setStatusCode(drogon::k400BadRequest);
         callback(response);
         return;
@@ -41,26 +37,18 @@ void AuthController::registerUser(
     if (repository.emailExists(email))
     {
         auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Email already exists"}}
-        );
-
+            Json::Value{{"message", "Email already exists"}});
         response->setStatusCode(drogon::k409Conflict);
         callback(response);
         return;
     }
 
-    bool created = repository.createUser(
-        fullName,
-        email,
-        password
-    );
+    bool created = repository.createUser(fullName, email, password);
 
     if (!created)
     {
         auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Failed to create user"}}
-        );
-
+            Json::Value{{"message", "Failed to create user"}});
         response->setStatusCode(drogon::k500InternalServerError);
         callback(response);
         return;
@@ -70,24 +58,22 @@ void AuthController::registerUser(
     result["message"] = "Registration successful";
 
     auto response = drogon::HttpResponse::newHttpJsonResponse(result);
-
     response->setStatusCode(drogon::k201Created);
     callback(response);
 }
-
 
 void AuthController::loginUser(
     const drogon::HttpRequestPtr& req,
     std::function<void(const drogon::HttpResponsePtr&)>&& callback)
 {
+    LOG_INFO << "LOGIN DEBUG 0: Login request received";
+
     auto json = req->getJsonObject();
 
     if (!json)
     {
         auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Invalid JSON"}}
-        );
-
+            Json::Value{{"message", "Invalid JSON"}});
         response->setStatusCode(drogon::k400BadRequest);
         callback(response);
         return;
@@ -99,48 +85,54 @@ void AuthController::loginUser(
     if (email.empty() || password.empty())
     {
         auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Email and password are required"}}
-        );
-
+            Json::Value{{"message", "Email and password are required"}});
         response->setStatusCode(drogon::k400BadRequest);
         callback(response);
         return;
     }
 
-    auto dbClient = drogon::app().getDbClient("default");
-
     try
     {
+        LOG_INFO << "LOGIN DEBUG 1: Getting database client";
+
+        auto dbClient = drogon::app().getDbClient("default");
+
+        LOG_INFO << "LOGIN DEBUG 2: Running user query";
+
         auto result = dbClient->execSqlSync(
             "SELECT id, full_name, email, password_hash, role "
             "FROM users WHERE email = $1 LIMIT 1",
-            email
-        );
+            email);
+
+        LOG_INFO << "LOGIN DEBUG 3: Query completed";
+        LOG_INFO << "LOGIN DEBUG 4: Rows found = " << result.size();
 
         if (result.empty())
         {
             auto response = drogon::HttpResponse::newHttpJsonResponse(
-                Json::Value{{"message", "Invalid email or password"}}
-            );
-
+                Json::Value{{"message", "Invalid email or password"}});
             response->setStatusCode(drogon::k401Unauthorized);
             callback(response);
             return;
         }
+
+        LOG_INFO << "LOGIN DEBUG 5: Reading password field";
 
         std::string storedPassword =
             result[0]["password_hash"].as<std::string>();
 
+        LOG_INFO << "LOGIN DEBUG 6: Password field read";
+
         if (storedPassword != password)
         {
             auto response = drogon::HttpResponse::newHttpJsonResponse(
-                Json::Value{{"message", "Invalid email or password"}}
-            );
-
+                Json::Value{{"message", "Invalid email or password"}});
             response->setStatusCode(drogon::k401Unauthorized);
             callback(response);
             return;
         }
+
+        LOG_INFO << "LOGIN DEBUG 7: Password matched";
 
         Json::Value user;
         user["id"] = result[0]["id"].as<int>();
@@ -155,6 +147,8 @@ void AuthController::loginUser(
         auto response =
             drogon::HttpResponse::newHttpJsonResponse(responseData);
 
+        LOG_INFO << "LOGIN DEBUG 8: Sending login response";
+
         callback(response);
     }
     catch (const std::exception& e)
@@ -162,9 +156,7 @@ void AuthController::loginUser(
         LOG_ERROR << "Login database error: " << e.what();
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Database error"}}
-        );
-
+            Json::Value{{"message", "Database error"}});
         response->setStatusCode(drogon::k500InternalServerError);
         callback(response);
     }
