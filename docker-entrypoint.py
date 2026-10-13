@@ -19,6 +19,9 @@ try:
         raise ValueError("DATABASE_URL is missing its host or database name.")
 
     query = parse_qs(parsed.query)
+    port_number = int(port)
+    if not 1 <= port_number <= 65535:
+        raise ValueError("PORT must be between 1 and 65535.")
 
     db_client = {
         "name": "default",
@@ -40,7 +43,7 @@ try:
         "listeners": [
             {
                 "address": "0.0.0.0",
-                "port": int(port)
+                "port": port_number
             }
         ],
         "app": {
@@ -53,6 +56,11 @@ try:
 
     with open("config/config.json", "w", encoding="utf-8") as file:
         json.dump(config, file, indent=2)
+    print(
+        "Generated Drogon config for PostgreSQL and listener "
+        "0.0.0.0:" + str(port_number),
+        flush=True
+    )
 
 except (ValueError, TypeError) as error:
     sys.exit("ERROR: Invalid deployment configuration: " + str(error))

@@ -49,7 +49,7 @@ Images are limited to 5 MiB and their JPEG, PNG, or WebP file signatures are che
 
 Successful logins receive a random bearer token. Seller product endpoints require `Authorization: Bearer <token>` and verify the seller role and product ownership against PostgreSQL. Tokens are stored as SHA-256 hashes in `user_sessions` and expire after 30 days; logout revokes the token.
 
-At startup, the service safely adds the nullable `products.seller_id` column and creates the session table/indexes when absent. `db/schema.sql` includes the same schema for new installations. Existing products are deliberately left unassigned rather than being transferred to an arbitrary seller. To let the correct seller manage particular legacy products, first verify their IDs and the seller's user ID, then assign only those rows using a reviewed PostgreSQL statement, for example:
+After Drogon starts, the service asynchronously adds the nullable `products.seller_id` column and creates the session table/indexes when absent. Requests receive HTTP 503 until the migrations finish; a database initialization failure is logged without credentials and shuts down the process cleanly. The listener is configured once by the deployment config generator, using Render's validated `PORT` on `0.0.0.0`. `db/schema.sql` includes the same schema for new installations. Existing products are deliberately left unassigned rather than being transferred to an arbitrary seller. To let the correct seller manage particular legacy products, first verify their IDs and the seller's user ID, then assign only those rows using a reviewed PostgreSQL statement, for example:
 
 ```sql
 UPDATE products
