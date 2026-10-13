@@ -1,63 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WaafiyyaMart | Login</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <main class="auth-shell">
-      <section class="auth-card">
-        <div class="brand-row" aria-label="WaafiyyaMart brand">
-          <div class="brand-mark">W</div>
-          <span>WaafiyyaMart</span>
-        </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#12372a">
+  <title>WaafiyyaMart | Welcome</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .welcome-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #edf7ef, #f8f5e9);
+      font-family: Arial, sans-serif;
+    }
+    .welcome-card {
+      width: min(100%, 850px);
+      padding: clamp(24px, 5vw, 48px);
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 16px 50px #12372a18;
+      text-align: center;
+    }
+    .welcome-brand {
+      color: #12372a;
+      font-size: clamp(25px, 5vw, 36px);
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .welcome-subtitle {
+      color: #66736a;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .role-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      text-align: left;
+    }
+    .role-card {
+      padding: 26px;
+      border: 1px solid #dce8dd;
+      border-radius: 18px;
+      background: #fbfdfb;
+    }
+    .role-icon {
+      font-size: 36px;
+    }
+    .role-card h2 {
+      color: #12372a;
+      margin-bottom: 8px;
+    }
+    .role-card p {
+      color: #66736a;
+      line-height: 1.5;
+      min-height: 48px;
+    }
+    .role-button {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      margin-top: 20px;
+      background: #176b45;
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+    .role-button:hover {
+      background: #105536;
+    }
+    .welcome-footer {
+      margin-top: 26px;
+      color: #66736a;
+    }
+    .welcome-footer a {
+      color: #176b45;
+    }
+    @media (max-width: 600px) {
+      .role-options { grid-template-columns: 1fr; }
+      .role-card p { min-height: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="welcome-page">
+    <section class="welcome-card">
+      <div class="welcome-brand">🌿 WaafiyyaMart</div>
+      <h1>How would you like to continue?</h1>
+      <p class="welcome-subtitle">
+        Welcome to WaafiyyaMart. Choose how you want to use our marketplace.
+      </p>
 
-        <h1>Welcome back</h1>
-        <p class="subtitle">Log in to continue shopping and manage your orders.</p>
+      <div class="role-options">
+        <article class="role-card">
+          <div class="role-icon" aria-hidden="true">🛍️</div>
+          <h2>I'm a Buyer</h2>
+          <p>Discover products, shop your favourites and track your orders.</p>
+          <a class="role-button" href="login.html?role=buyer">
+            Continue as Buyer
+          </a>
+        </article>
 
-        <form id="loginForm" novalidate>
-          <label for="email">Email address</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="you@example.com"
-            autocomplete="email"
-            required
-          />
+        <article class="role-card">
+          <div class="role-icon" aria-hidden="true">🏪</div>
+          <h2>I'm a Seller</h2>
+          <p>Manage your shop and products through your authorized seller account.</p>
+          <a class="role-button" href="login.html?role=seller">
+            Continue as Seller
+          </a>
+        </article>
+      </div>
 
-          <label for="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Enter your password"
-            autocomplete="current-password"
-            required
-          />
-
-          <div class="form-row">
-            <label class="checkbox-row" for="rememberMe">
-              <input id="rememberMe" type="checkbox" />
-              <span>Remember me</span>
-            </label>
-            <a href="#">Forgot password?</a>
-          </div>
-
-          <button type="submit">Sign in</button>
-        </form>
-
-        <p class="switch-text">
-          New here?
-          <a href="register.html">Create an account</a>
-        </p>
-
-        <p id="loginMessage" class="message" role="status" aria-live="polite"></p>
-      </section>
-    </main>
-
-    <script src="app.js"></script>
-  </body>
+      <p class="welcome-footer">
+        New to WaafiyyaMart?
+        <a href="register.html">Create an account</a>
+      </p>
+    </section>
+  </main>
+</body>
 </html>
