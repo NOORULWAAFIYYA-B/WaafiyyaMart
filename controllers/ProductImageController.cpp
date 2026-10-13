@@ -20,16 +20,14 @@ void ProductImageController::getImage(
                                              path,
                                              mimeType))
         {
-            callback(drogon::HttpResponse::newHttpResponse(
-                drogon::k404NotFound));
+            callback(drogon::HttpResponse::newNotFoundResponse());
             return;
         }
 
         std::ifstream input(path, std::ios::binary);
         if (!input)
         {
-            callback(drogon::HttpResponse::newHttpResponse(
-                drogon::k404NotFound));
+            callback(drogon::HttpResponse::newNotFoundResponse());
             return;
         }
 
