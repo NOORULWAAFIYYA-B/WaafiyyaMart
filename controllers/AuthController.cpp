@@ -67,26 +67,28 @@ void AuthController::loginUser(
     const drogon::HttpRequestPtr& req,
     std::function<void(const drogon::HttpResponsePtr&)>&& callback)
 {
-    LOG_INFO << "LOGIN DEBUG 0: Login request received";
-
     auto json = req->getJsonObject();
 
     if (!json)
     {
-        auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Invalid JSON"}});
+        Json::Value body;
+        body["message"] = "Invalid JSON";
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(body);
         response->setStatusCode(drogon::k400BadRequest);
         callback(response);
         return;
     }
 
-    std::string email = (*json)["email"].asString();
-    std::string password = (*json)["password"].asString();
+    const std::string email = (*json)["email"].asString();
+    const std::string password = (*json)["password"].asString();
 
     if (email.empty() || password.empty())
     {
-        auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Email and password are required"}});
+        Json::Value body;
+        body["message"] = "Email and password are required";
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(body);
         response->setStatusCode(drogon::k400BadRequest);
         callback(response);
         return;
@@ -94,76 +96,89 @@ void AuthController::loginUser(
 
     try
     {
-        LOG_INFO << "LOGIN DEBUG 1: Getting database client";
-
         auto dbClient = drogon::app().getDbClient("default");
 
-        LOG_INFO << "LOGIN DEBUG 2: Running user query";
+        if (!dbClient)
+        {
+            LOG_ERROR << "Login failed: database client unavailable";
+
+            Json::Value body;
+            body["message"] = "Database unavailable";
+
+            auto response =
+                drogon::HttpResponse::newHttpJsonResponse(body);
+            response->setStatusCode(drogon::k500InternalServerError);
+            callback(response);
+            return;
+        }
 
         auto result = dbClient->execSqlSync(
             "SELECT id, full_name, email, password_hash, role "
             "FROM users WHERE email = $1 LIMIT 1",
             email);
 
-        LOG_INFO << "LOGIN DEBUG 3: Query completed";
-        LOG_INFO << "LOGIN DEBUG 4: Rows found = " << result.size();
-
         if (result.empty())
         {
-            auto response = drogon::HttpResponse::newHttpJsonResponse(
-                Json::Value{{"message", "Invalid email or password"}});
+            Json::Value body;
+            body["message"] = "Invalid email or password";
+
+            auto response =
+                drogon::HttpResponse::newHttpJsonResponse(body);
             response->setStatusCode(drogon::k401Unauthorized);
             callback(response);
             return;
         }
 
-        LOG_INFO << "LOGIN DEBUG 5: Reading password field";
-
-        std::string storedPassword =
+        const auto userId = result[0]["id"].as<int>();
+        const std::string fullName =
+            result[0]["full_name"].as<std::string>();
+        const std::string userEmail =
+            result[0]["email"].as<std::string>();
+        const std::string storedPassword =
             result[0]["password_hash"].as<std::string>();
-
-        LOG_INFO << "LOGIN DEBUG 6: Password field read";
+        const std::string role =
+            result[0]["role"].as<std::string>();
 
         if (storedPassword != password)
         {
-            auto response = drogon::HttpResponse::newHttpJsonResponse(
-                Json::Value{{"message", "Invalid email or password"}});
+            Json::Value body;
+            body["message"] = "Invalid email or password";
+
+            auto response =
+                drogon::HttpResponse::newHttpJsonResponse(body);
             response->setStatusCode(drogon::k401Unauthorized);
             callback(response);
             return;
         }
 
-        LOG_INFO << "LOGIN DEBUG 7: Password matched";
+        const std::string token = AuthSession::createSession(userId);
 
         Json::Value user;
-        user["id"] = result[0]["id"].as<int>();
-        user["full_name"] = result[0]["full_name"].as<std::string>();
-        user["email"] = result[0]["email"].as<std::string>();
-        user["role"] = result[0]["role"].as<std::string>();
-        user["token"] = AuthSession::createSession(
-            result[0]["id"].as<int>());
+        user["id"] = userId;
+        user["full_name"] = fullName;
+        user["email"] = userEmail;
+        user["role"] = role;
+        user["token"] = token;
 
-        Json::Value responseData;
-        responseData["message"] = "Login successful";
-        responseData["user"] = user;
+        Json::Value body;
+        body["message"] = "Login successful";
+        body["user"] = user;
 
-        auto response =
-            drogon::HttpResponse::newHttpJsonResponse(responseData);
-
-        LOG_INFO << "LOGIN DEBUG 8: Sending login response";
-
-        callback(response);
+        callback(drogon::HttpResponse::newHttpJsonResponse(body));
     }
     catch (const std::exception& e)
     {
-        LOG_ERROR << "Login database error: " << e.what();
+        LOG_ERROR << "Login failed with exception: " << e.what();
 
-        auto response = drogon::HttpResponse::newHttpJsonResponse(
-            Json::Value{{"message", "Database error"}});
+        Json::Value body;
+        body["message"] = "Login could not be completed";
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(body);
         response->setStatusCode(drogon::k500InternalServerError);
         callback(response);
     }
 }
+
 
 void AuthController::logoutUser(
     const drogon::HttpRequestPtr& req,
