@@ -1,3 +1,4 @@
+
 #include <drogon/drogon.h>
 
 #include <array>
@@ -12,22 +13,51 @@ namespace
 {
 using DatabaseReady = std::shared_ptr<std::atomic<bool>>;
 
+constexpr char kAllowedOrigin[] =
+    "https://waafiyyamart.onrender.com";
+
 constexpr std::array<const char*, 4> kStartupMigrations = {
     "ALTER TABLE products "
     "ADD COLUMN IF NOT EXISTS seller_id INTEGER REFERENCES users(id)",
+
     "CREATE TABLE IF NOT EXISTS user_sessions ("
     "token_hash CHAR(64) PRIMARY KEY, "
     "user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, "
     "expires_at TIMESTAMP NOT NULL, "
     "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)",
+
     "CREATE INDEX IF NOT EXISTS idx_products_seller_id "
     "ON products(seller_id)",
-    "CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id "
-    "ON user_sessions(user_id)"};
 
-void runStartupMigration(const drogon::orm::DbClientPtr& dbClient,
-                         std::size_t index,
-                         const DatabaseReady& databaseReady)
+    "CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id "
+    "ON user_sessions(user_id)"
+};
+
+void addCorsHeaders(
+    const drogon::HttpRequestPtr& req,
+    const drogon::HttpResponsePtr& resp)
+{
+    const auto origin = req->getHeader("origin");
+
+    if (origin != kAllowedOrigin)
+    {
+        return;
+    }
+
+    resp->addHeader("Access-Control-Allow-Origin", kAllowedOrigin);
+    resp->addHeader("Vary", "Origin");
+    resp->addHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS");
+    resp->addHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization");
+}
+
+void runStartupMigration(
+    const drogon::orm::DbClientPtr& dbClient,
+    std::size_t index,
+    const DatabaseReady& databaseReady)
 {
     if (index == kStartupMigrations.size())
     {
@@ -38,15 +68,18 @@ void runStartupMigration(const drogon::orm::DbClientPtr& dbClient,
 
     LOG_INFO << "Running startup database migration "
              << (index + 1) << "/" << kStartupMigrations.size();
+
     dbClient->execSqlAsync(
         kStartupMigrations[index],
-        [dbClient, index, databaseReady](const drogon::orm::Result&) {
+        [dbClient, index, databaseReady](
+            const drogon::orm::Result&) {
             runStartupMigration(dbClient, index + 1, databaseReady);
         },
         [databaseReady, index](
             const drogon::orm::DrogonDbException& error) {
             LOG_ERROR << "Startup database migration " << (index + 1)
                       << " failed: " << error.base().what();
+
             databaseReady->store(false, std::memory_order_release);
             drogon::app().quit();
         });
@@ -58,12 +91,14 @@ int main()
     const char* portEnvironment = std::getenv("PORT");
     const std::string port =
         portEnvironment && *portEnvironment ? portEnvironment : "8080";
+
     std::cout << "WaafiyyaMart process starting; configured PORT="
               << port << std::endl;
 
     try
     {
         auto& app = drogon::app();
+
         std::cerr << "Loading Drogon configuration" << std::endl;
         app.loadConfigFile("./config/config.json");
         std::cerr << "Drogon configuration loaded" << std::endl;
@@ -71,43 +106,84 @@ int main()
         app.setDocumentRoot("./public")
             .setClientMaxBodySize(6 * 1024 * 1024);
 
-        if (std::getenv("RENDER") && !std::getenv("PRODUCT_IMAGE_DIR"))
+        // Add CORS headers to outgoing API responses.
+        app.registerPreSendingAdvice(
+            [](const drogon::HttpRequestPtr& req,
+               const drogon::HttpResponsePtr& resp) {
+                if (req->path().rfind("/api/", 0) == 0)
+                {
+                    addCorsHeaders(req, resp);
+                }
+            });
+
+        if (std::getenv("RENDER") &&
+            !std::getenv("PRODUCT_IMAGE_DIR"))
         {
-            LOG_WARN << "PRODUCT_IMAGE_DIR is unset; product image uploads "
-                        "will be unavailable until persistent storage is "
-                        "configured";
+            LOG_WARN
+                << "PRODUCT_IMAGE_DIR is unset; product image uploads "
+                   "will be unavailable until persistent storage is "
+                   "configured";
         }
         else if (std::getenv("PRODUCT_IMAGE_DIR"))
         {
             LOG_INFO << "Product image storage directory is configured";
         }
 
-        const auto databaseReady = std::make_shared<std::atomic<bool>>(false);
+        const auto databaseReady =
+            std::make_shared<std::atomic<bool>>(false);
+
         app.registerPreRoutingAdvice(
-            [databaseReady](const drogon::HttpRequestPtr&,
-                            drogon::AdviceCallback&& callback,
-                            drogon::AdviceChainCallback&& chainCallback) {
+            [databaseReady](
+                const drogon::HttpRequestPtr& req,
+                drogon::AdviceCallback&& callback,
+                drogon::AdviceChainCallback&& chainCallback) {
+
+                // Handle browser CORS preflight before database readiness.
+                if (req->method() == drogon::Options &&
+                    req->path().rfind("/api/", 0) == 0)
+                {
+                    auto response = drogon::HttpResponse::newHttpResponse();
+                    response->setStatusCode(drogon::k204NoContent);
+
+                    addCorsHeaders(req, response);
+
+                    callback(response);
+                    return;
+                }
+
+                // Preserve the existing database-readiness check.
                 if (!databaseReady->load(std::memory_order_acquire))
                 {
                     Json::Value body;
-                    body["message"] = "Service initialization in progress.";
+                    body["message"] =
+                        "Service initialization in progress.";
+
                     auto response =
                         drogon::HttpResponse::newHttpJsonResponse(body);
-                    response->setStatusCode(drogon::k503ServiceUnavailable);
+
+                    response->setStatusCode(
+                        drogon::k503ServiceUnavailable);
+
                     callback(response);
                     return;
                 }
 
                 chainCallback();
             });
+
         app.registerBeginningAdvice([databaseReady]() {
-            LOG_INFO << "Drogon event loop started; initializing database";
+            LOG_INFO
+                << "Drogon event loop started; initializing database";
+
             try
             {
                 auto dbClient = drogon::app().getDbClient("default");
+
                 if (!dbClient)
                 {
-                    LOG_ERROR << "Configured PostgreSQL client is unavailable";
+                    LOG_ERROR
+                        << "Configured PostgreSQL client is unavailable";
+
                     drogon::app().quit();
                     return;
                 }
@@ -116,27 +192,35 @@ int main()
             }
             catch (const std::exception& error)
             {
-                LOG_ERROR << "Unable to initialize PostgreSQL client: "
-                          << error.what();
+                LOG_ERROR
+                    << "Unable to initialize PostgreSQL client: "
+                    << error.what();
+
                 drogon::app().quit();
             }
         });
 
-        std::cerr << "Starting Drogon with listener from config/config.json"
-                  << std::endl;
+        std::cerr
+            << "Starting Drogon with listener from config/config.json"
+            << std::endl;
+
         app.run();
+
         std::cerr << "Drogon event loop stopped" << std::endl;
     }
     catch (const std::exception& error)
     {
         std::cerr << "WaafiyyaMart startup failed: "
                   << error.what() << std::endl;
+
         return EXIT_FAILURE;
     }
     catch (...)
     {
-        std::cerr << "WaafiyyaMart startup failed with an unknown error"
-                  << std::endl;
+        std::cerr
+            << "WaafiyyaMart startup failed with an unknown error"
+            << std::endl;
+
         return EXIT_FAILURE;
     }
 
